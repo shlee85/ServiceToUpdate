@@ -4,17 +4,26 @@ plugins {
 }
 
 android {
-    namespace = "com.lowasis.servicetoupdate"
+    namespace = "com.lowasis.usbreadtest"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.lowasis.servicetoupdate"
+        applicationId = "com.lowasis.usbreadtest"
         minSdk = 30
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("system") {
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+            storePassword = "android"
+            storeFile = file("../platform/platform.jks")
+        }
     }
 
     buildTypes {
@@ -32,11 +41,6 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
-    }
-
-    buildFeatures {
-        viewBinding = true
-        dataBinding = true
     }
 }
 

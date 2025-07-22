@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "ServiceToUpdate"
+rootProject.name = "UsbReadTest"
 include(":app")
  

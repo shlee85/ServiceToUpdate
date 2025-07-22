@@ -1,4 +1,4 @@
-package com.lowasis.servicetoupdate
+package com.lowasis.usbreadtest
 
 import org.junit.Test
 
