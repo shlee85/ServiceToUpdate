@@ -16,41 +16,12 @@ import android.provider.Settings
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.io.File
+import java.util.zip.ZipFile
 import kotlin.math.PI
 
 class UsbReceiver(): BroadcastReceiver() {
     private var mUsbHandler: Handler?=null
     val appContext = MyApp.instance.applicationContext
-
-    init {
-
-
-/*
-        mUsbHandler = Handler(Looper.getMainLooper()) { msg->
-            when(msg.what) {
-                1 -> {
-                    Log.i(TAG, "USB Mount!!!")
-
-                    val volumes =
-                        (appContext.getSystemService(STORAGE_SERVICE) as StorageManager).storageVolumes
-
-                    Log.i("UsbReceiver", "volumes.size = ${volumes.size}, ${volumes.get(1)}")
-                    Log.i(TAG, "=============================================================")
-                    for(volume in volumes) {
-                        if (volume.isEmulated || volume.uuid == null) continue
-                        Log.i("UsbReceiver", File("/storage/" + volume.uuid + File.separator + "factory.txt").readText())
-                        Log.i("UsbReceiver", File("/storage/" + volume.uuid + File.separator + "README.txt").readText())
-                    }
-
-                    Log.i(TAG, "=============================================================")
-                }
-            }
-
-            true
-        }
-
- */
-    }
 
     private var lastActionTime: Long = 0
     private var lastAction: String? = null
@@ -70,7 +41,7 @@ class UsbReceiver(): BroadcastReceiver() {
         lastActionTime = now
 
 
-        when (intent?.action) {
+        when (intent.action) {
             UsbManager.ACTION_USB_DEVICE_ATTACHED -> {
                 Log.i(TAG, "USB 연결됨: 서비스 시작!!!!!!")
 
@@ -87,11 +58,15 @@ class UsbReceiver(): BroadcastReceiver() {
                 val volumes =
                     (appContext.getSystemService(STORAGE_SERVICE) as StorageManager).storageVolumes
 
+                Log.i(TAG, "Build version = [${getSysBuildVersion()}]")
                 Log.i(TAG, "=============================================================")
                 for(volume in volumes) {
                     if (volume.isEmulated || volume.uuid == null) continue
                     Log.i("UsbReceiver1", File("/storage/" + volume.uuid + File.separator + "factory.txt").readText())
                     Log.i("UsbReceiver1", File("/storage/" + volume.uuid + File.separator + "README.txt").readText())
+
+                    val version = getUpdateFileVersion("/storage/"+volume.uuid + File.separator)
+                    Log.i(TAG, "version = [$version]")
                 }
             }
 
@@ -102,6 +77,35 @@ class UsbReceiver(): BroadcastReceiver() {
         }
     }
 
+    private fun getSysBuildVersion(): String {
+        val display = Build.DISPLAY
+
+        val regex = Regex("""\beng\.lowasi\.\d{8}\.\d{6}\b""")  //버전정보만 가져오기 위한 구분
+        val match = regex.find(display)
+        val buildVersion = match?.value ?: "정보 없음"
+
+        return buildVersion
+    }
+
+    private fun getUpdateFileVersion(path: String): String {
+
+        val updateFile = "tetra.zip"
+        val targetFile = "META-INF/com/android/metadata"
+        val zipFile = ZipFile(File(path+"/"+updateFile))
+        val entry = zipFile.getEntry(targetFile)
+
+        if(entry != null) {
+            zipFile.getInputStream(entry).bufferedReader().useLines { lines ->
+                for(line in lines) {
+                    if(line.startsWith("post-build-incremental=")) {   //특정 문자열로 시작하는 검사
+                        return line.substringAfter("=", "Unknown") //"=" 이후의 값을 가져온다. 없는 경우 "Unknown"
+                    }
+                }
+            }
+        }
+
+        return ""
+    }
 
     companion object {
         private val TAG = UsbReceiver::class.java.simpleName

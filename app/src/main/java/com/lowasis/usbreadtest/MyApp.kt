@@ -6,11 +6,15 @@ import android.content.IntentFilter
 import android.hardware.usb.UsbManager
 
 class MyApp: Application() {
+    // USB 마운트 등 브로드캐스트를 수신할 Receiver 인스턴스
     lateinit var mountReceiver: UsbReceiver
 
     override fun onCreate() {
         super.onCreate()
+
+        //앱 전체에서 사용할 수 있는 전역 application 인스턴스 저장.
         instance = this
+
 
         mountReceiver = UsbReceiver()
 
