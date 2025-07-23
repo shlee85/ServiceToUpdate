@@ -34,19 +34,21 @@ class MainActivity : AppCompatActivity() {
 
         Log.d("PermissionCheck", "SDK VERSION: ${Build.VERSION.SDK_INT}")
 
-        checkAndRequestStoragePermission()
+
+
+       // checkAndRequestStoragePermission()
     }
 
     override fun onStart() {
         super.onStart()
 
-        val volumes = (getSystemService(STORAGE_SERVICE) as StorageManager).storageVolumes
-        Log.i("TAG", "volumes.size = ${volumes.size}, ${volumes.get(1)}")
-        for(volume in volumes) {
-            if (volume.isEmulated || volume.uuid == null) continue
-            Log.i("TAG11", File("/storage/" + volume.uuid + File.separator + "factory.txt").readText())
-            Log.i("TAG12", File("/storage/" + volume.uuid + File.separator + "README.txt").readText())
-        }
+//        val volumes = (getSystemService(STORAGE_SERVICE) as StorageManager).storageVolumes
+//        Log.i("TAG", "volumes.size = ${volumes.size}, ${volumes.get(1)}")
+//        for(volume in volumes) {
+//            if (volume.isEmulated || volume.uuid == null) continue
+//            Log.i("TAG11", File("/storage/" + volume.uuid + File.separator + "factory.txt").readText())
+//            Log.i("TAG12", File("/storage/" + volume.uuid + File.separator + "README.txt").readText())
+//        }
     }
 
     private fun checkAndRequestStoragePermission() {

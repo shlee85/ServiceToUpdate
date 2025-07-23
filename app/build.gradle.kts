@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId = "com.lowasis.usbreadtest"
         minSdk = 30
-        targetSdk = 36
+        targetSdk = 30
         versionCode = 1
         versionName = "1.0"
 
